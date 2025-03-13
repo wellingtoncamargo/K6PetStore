@@ -1,0 +1,17 @@
+{
+    "insecureSkipTLSVerify": true,
+    "scenarios": {
+      "cenario1": {
+        "executor": "per-vu-iterations",
+        "startTime": "1s",
+        "gracefulStop": "10s",
+        "env": { "EXAMPLEVAR": "testing"
+      },
+        "tags": { "example_tag": "testing"
+      },
+        "vus": 1,
+        "iterations": 1,
+        "maxDuration": "30s"
+    }
+  }
+}
