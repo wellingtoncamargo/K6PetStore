@@ -1,12 +1,12 @@
 import http from 'k6/http';
-import * as body from '../utils/BodyRequest.js'
+import * as body from '../data/BodyRequest.js'
 import { sleep, fail, check } from 'k6';
 import {Trend, Rate, Counter} from 'k6/metrics';
 
 const headers = {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'api_key':'special-key'
+    'Authorization':'Basic YXBpX2tleTpzcGVjaWFsLWtleQ=='
 };
 
 const statusGet = 200;
@@ -15,7 +15,7 @@ const customTrend = new Trend('custom_waiting_time');
 const requestCount = new Counter('custom_request_count');
 const failureRate = new Rate('custom_failure_rate');
 
-export function getPetsbyStatus(status){ //pending
+export function getPetsbyStatus(status){
     const lista = ['pending','sold', 'available']
     
     const res = http.get(`https://petstore.swagger.io/v2/pet/findByStatus?status=${lista.includes(status)? status : fail('Status inexistente ou não informado!')}`)
@@ -55,6 +55,40 @@ export function postNewPet(){
     return JSON.parse(res.body)
 }
 
+// import { readFileSync } from 'k6/fs';
+let imageData = open('../data/logotipo_K6.jpg', 'b')
+export function postInsertImage(id){
+//     const fb = {
+//     field: 'additionalMetadata="file"',
+//     file: http.file(imageData, 'test.jpeg'),
+//   };
+//     // const f = http.file(imageData, 'test.jpeg')
+//     // headers['Content-Type'] = f.content_type
+    
+
+//     console.info(headers)
+//     console.info(fb)
+
+        
+//     const res = http.post(`https://petstore.swagger.io/v2/pet/${id}/uploadImage`,fb, { headers })
+
+//     check(res,{
+//         "Pet cadastrado com sucesso": (r) => r.status === statusGet
+//     })
+//     customTrend.add(res.timings.waiting);
+//     requestCount.add(1);
+//     failureRate.add(res.status !== statusGet);
+    
+    let data = {
+    field: 'logotipo_K6.jpg',
+    file: http.file(imageData,'image/jpeg'),
+  };
+  delete headers['Content-Type']
+
+    const res = http.post(`https://petstore.swagger.io/v2/pet/${id}/uploadImage`, data, { headers });
+    return res.body
+}
+
 export function putPet(putBody){
         
     const res = http.put(`https://petstore.swagger.io/v2/pet`, JSON.stringify(putBody), { headers })
@@ -81,13 +115,11 @@ export function deletePetbyId(id){
     return JSON.parse(res.body)
 }
 
-
 export default function () {
     const post = postNewPet()
     console.info(post)
     post.category.name = 'Cachorro'
-    console.info(post)
     console.info(putPet(post))
-    console.info(deletePetbyId(post.id))
-    
+    console.info(postInsertImage(post.id))
+    console.info(getPetsbyId(post.id))
 }
