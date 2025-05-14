@@ -17,10 +17,10 @@ export function cnpj(){
     var n6 = gera_random(n);
     var n7 = gera_random(n);
     var n8 = gera_random(n);
-    var n9 = 0;//gera_random(n);
-    var n10 = 0;//gera_random(n);
-    var n11 = 0;//gera_random(n);
-    var n12 = 1;//gera_random(n);
+    var n9 = 0;
+    var n10 = 0;
+    var n11 = 0;
+    var n12 = 1;
     var d1 = n12*2+n11*3+n10*4+n9*5+n8*6+n7*7+n6*8+n5*9+n4*2+n3*3+n2*4+n1*5;
     d1 = 11 - ( mod(d1,11) );
     if (d1>=10) d1 = 0;
@@ -37,3 +37,38 @@ export function stringifyUUID(suid) {
         .replace('-', '') 
         .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
 }    
+
+export function isValidUUID(str) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(str);
+}
+
+export function uuidStringfy(str) {
+    const clean = str.replace(/[^a-fA-F0-9]/g, '').toLowerCase();
+
+    if (clean.length === 32) {
+        
+        return clean.replace(
+            /^(.{8})(.{4})(.{4})(.{4})(.{12})$/,
+            '$1-$2-$3-$4-$5'
+        );
+    
+    } else {
+        throw new Error('A string precisa ter exatamente 32 caracteres hexadecimais.');
+    }
+}
+
+export function formatToUUID(str) {
+    return str.replace(
+        /^(.{8})(.{4})(.{4})(.{4})(.{12})$/,
+        '$1-$2-$3-$4-$5'
+    );
+}
+
+export function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}

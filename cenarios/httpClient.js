@@ -3,6 +3,7 @@ import * as body from '../data/BodyRequest.js'
 import { sleep, fail, check } from 'k6';
 import {Trend, Rate, Counter} from 'k6/metrics';
 
+
 const headers = {
     'accept': 'application/json',
     'Content-Type': 'application/json',
@@ -55,37 +56,26 @@ export function postNewPet(){
     return JSON.parse(res.body)
 }
 
-// import { readFileSync } from 'k6/fs';
-let imageData = open('../data/logotipo_K6.jpg', 'b')
+const imageBin = open('../data/logotipo_K6.jpg', 'b');
 export function postInsertImage(id){
-//     const fb = {
-//     field: 'additionalMetadata="file"',
-//     file: http.file(imageData, 'test.jpeg'),
-//   };
-//     // const f = http.file(imageData, 'test.jpeg')
-//     // headers['Content-Type'] = f.content_type
-    
+    const headers = {
+        'Authorization': 'Basic YXBpX2tleTpzcGVjaWFsLWtleQ==', // substitua com seu token real
+        'Accept': 'application/json',
+    };
+    const formData = body.newImage()
+    // const formData ={
+    //     additionalMetadata: 'file',
+    //     file: http.file(imageBin, 'logotipo_K6.jpg', 'image/.jpeg'),
+    // };
+   
+    const res = http.post(`https://petstore.swagger.io/v2/pet/${id}/uploadImage`,formData, { headers })
 
-//     console.info(headers)
-//     console.info(fb)
-
-        
-//     const res = http.post(`https://petstore.swagger.io/v2/pet/${id}/uploadImage`,fb, { headers })
-
-//     check(res,{
-//         "Pet cadastrado com sucesso": (r) => r.status === statusGet
-//     })
-//     customTrend.add(res.timings.waiting);
-//     requestCount.add(1);
-//     failureRate.add(res.status !== statusGet);
-    
-    let data = {
-    field: 'logotipo_K6.jpg',
-    file: http.file(imageData,'image/jpeg'),
-  };
-  delete headers['Content-Type']
-
-    const res = http.post(`https://petstore.swagger.io/v2/pet/${id}/uploadImage`, data, { headers });
+    check(res,{
+                "Pet imagem incluida com sucesso": (r) => r.status === statusGet
+            })
+    customTrend.add(res.timings.waiting);
+    requestCount.add(1);
+    failureRate.add(res.status !== statusGet);
     return res.body
 }
 

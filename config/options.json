@@ -9,8 +9,8 @@
       },
         "tags": { "example_tag": "testing"
       },
-        "vus": 1,
-        "iterations": 1,
+        "vus": 5,
+        "iterations": 11,
         "maxDuration": "30s"
     }
   }
